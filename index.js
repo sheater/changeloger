@@ -14,10 +14,8 @@ program
 	.option('--ticket-tracker-url [url]', 'Ticket tracker url')
 	.parse(process.argv);
 
-function getCommitHashStr (commit) {
-	const { hash } = commit;
+function getCommitHashStr (hash) {
 	const { gitTrackerUrl } = program;
-
 	const hashTrunc = hash.substring(0, HASH_VISIBLE_LENGTH);
 
 	if (gitTrackerUrl) {
@@ -26,6 +24,50 @@ function getCommitHashStr (commit) {
 	else {
 		return hashTrunc;
 	}
+}
+
+function getTicketStr (ticket) {
+	const { ticketTrackerUrl } = program;
+
+	if (ticket) {
+		if (ticketTrackerUrl) {
+			return ` ([#${ticket}](${ticketTrackerUrl.replace('{{ticket}}', ticket)}))`;
+		}
+		else {
+			return ` (#${ticket})`;
+		}
+	}
+
+	return '';
+}
+
+function getTypeStr (type) {
+	if (type) {
+		return ` **${type}:**`;
+	}
+
+	return '';
+}
+
+const TICKET_ID_MATCH = /\(#([^\(]+)\)$/;
+const TYPE_SCOPE_MATCH = /^([^(^:]+)(?:\(([^)]+)\))?:/;
+
+function parseCommitBody (body) {
+	const ticketMatch = body.match(TICKET_ID_MATCH);
+	const ticket = ticketMatch.length > 1 ? ticketMatch[1] : null;
+
+	const typeScopeMatch = body.match(TYPE_SCOPE_MATCH);
+	const type = typeScopeMatch.length > 1 ? typeScopeMatch[1] : null;
+	const scope = typeScopeMatch.length > 2 ? typeScopeMatch[2] : null;
+
+	const subject = body
+		.replace(TICKET_ID_MATCH, '')
+		.replace(TYPE_SCOPE_MATCH, '')
+		.trim();
+
+	return {
+		type, scope, subject, ticket
+	};
 }
 
 class Version {
@@ -44,9 +86,9 @@ class Version {
 		const header = `## ${this._major}.${this._minor}.${this._patch}\n`;
 
 		return this._commits.reduce((acc, commit) => {
-			const { authorName, authorEmail, date, subject } = commit;
+			const { hash, type, authorName, authorEmail, date, subject, ticket } = commit;
 
-			acc += `[${getCommitHashStr(commit)}] ${subject}  \n`;
+			acc += `[${getCommitHashStr(hash)}]${getTypeStr(type)} ${subject}${getTicketStr(ticket)}  \n`;
 
 			return acc;
 		}, header);
@@ -70,7 +112,6 @@ class Changelog {
 		}, '# Changelog  \n');
 
 		fs.writeFileSync(program.output, content);
-		console.log('content', content);
 	}
 }
 
@@ -90,17 +131,6 @@ function execAsync (command) {
             resolve(stdout, stderr);
         });
     });
-}
-
-function getTags () {
-	return execAsync(`cd ${program.path} && git tag`)
-		.then((stdout) => {
-			const tags = stdout
-				.split('\n')
-				.filter((tag) => VERSION_TAG_CHECK.test(tag));
-
-			return tags;
-		});
 }
 
 function getCommits (fromTag, toTag) {
@@ -126,23 +156,35 @@ function getCommits (fromTag, toTag) {
 			` ${revision}`
 	].join('');
 
-	return execAsync(command)
-		.then((stdout, stderr) => {
-			const commits = stdout
-				.split('\n\n')
-				.map((commit) => {
-					const [ hash, authorName, authorEmail, date, subject ] = commit.split('\n');
+	return execAsync(command).then((stdout, stderr) => {
+		const commits = stdout
+			.split('\n\n')
+			.map((commit) => {
+				const [ hash, authorName, authorEmail, date, body ] = commit.split('\n');
 
-					return { hash, authorName, authorEmail, date, subject };
-				});
+				return Object.assign(
+					{ hash, authorName, authorEmail, date },
+					parseCommitBody(body)
+				);
+			});
 
-			return commits;
-		});
+		return commits;
+	});
 }
 
-const changelog = new Changelog();
+function getVersionTags () {
+	return execAsync(`cd ${program.path} && git tag`).then((stdout) => {
+		const tags = stdout
+			.split('\n')
+			.filter((tag) => VERSION_TAG_CHECK.test(tag));
 
-getTags().then((tags) => {
+		return tags;
+	});
+}
+
+getVersionTags().then((tags) => {
+	const changelog = new Changelog();
+
 	const promises = tags.reverse().reduce((acc, tag, i) => {
 		if (i >= program.num && !program.all) {
 			return acc;
