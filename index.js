@@ -6,12 +6,12 @@ const HASH_VISIBLE_LENGTH = 10;
 
 program
 	.version('0.0.1')
-	.option('-a, --all', 'Write all versions')
-	.option('-n, --num <n>', 'Number of last versions', 1)
-	.option('-o, --output [file]', 'Output file', 'CHANGELOG.md')
-	.option('-p, --path [file]', 'Input path', '.')
-	.option('--git-tracker-url [url]', 'Git tracker url')
-	.option('--ticket-tracker-url [url]', 'Ticket tracker url')
+	.option('-a, --all', 'write all versions')
+	.option('-n, --num <n>', 'number of last versions', 1)
+	.option('-o, --output [file]', 'output file', 'CHANGELOG.md')
+	.option('-p, --path [file]', 'input path', '.')
+	.option('--git-tracker-url [url]', 'git tracker url')
+	.option('--ticket-tracker-url [url]', 'ticket tracker url')
 	.parse(process.argv);
 
 function getCommitHashStr (hash) {
