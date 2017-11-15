@@ -17,6 +17,6 @@ changelog-generator [options]
 - *-n, --num <n>*               number of last versions
 - *-o, --output [file]*         output file
 - *-p, --path [file]*           input path
-- *--git-tracker-url [url]*     git tracker url
-- *--ticket-tracker-url [url]*  ticket tracker url
-- *-h, --help*                  output usage information
+
+## Configuration
+Comming soon
