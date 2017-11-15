@@ -1,10 +1,15 @@
 {
-  "name": "@skove/changelog-generator",
-  "version": "0.0.2",
+  "name": "@skove/changeloger",
+  "version": "0.2.12",
   "description": "",
   "main": "index.js",
   "bin": {
-    "changelog-generator": "index.js"
+    "changeloger": "./changeloger.js"
+  },
+  "scripts": {
+    "release:patch": "./scripts/update-version.sh patch",
+    "release:minor": "./scripts/update-version.sh minor",
+    "release:major": "./scripts/update-version.sh major"
   },
   "author": "Štěpán Skovajsa <skovajsa.s@gmail.com>",
   "license": "ISC",
