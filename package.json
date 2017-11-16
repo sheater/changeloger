@@ -1,10 +1,10 @@
 {
-  "name": "@skove/changelog-generator",
+  "name": "@skove/changeloger",
   "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "bin": {
-    "changelog-generator": "index.js"
+    "changeloger": "changeloger.js"
   },
   "author": "Štěpán Skovajsa <skovajsa.s@gmail.com>",
   "license": "ISC",

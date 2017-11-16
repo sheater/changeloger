@@ -1,4 +1,4 @@
-# Changelog generator
+# Changeloger
 
 ![](https://cdn2.iconfinder.com/data/icons/freecns-cumulus/32/519791-101_Warning-128.png)
 This is currently work in progress, not all features working right
