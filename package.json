@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "changeloger": "changeloger.js"
+    "release:patch": "",
+    "release:minor": "",
+    "release:major": ""
   },
   "author": "Štěpán Skovajsa <skovajsa.s@gmail.com>",
   "license": "ISC",
