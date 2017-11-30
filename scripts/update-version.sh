@@ -14,7 +14,7 @@ VERSION=$(npm -f version $DEPLOY_RANK)
 echo "Release $VERSION"
 
 git commit -am "Release $VERSION" --allow-empty
-git tag $VERSION
+# git tag $VERSION
 # git push origin master
 # git push origin --tags
 
