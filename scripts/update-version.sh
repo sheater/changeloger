@@ -15,8 +15,8 @@ echo "Release $VERSION"
 
 git commit -am "Release $VERSION" --allow-empty
 git tag $VERSION
-git push origin master
-git push origin --tags
+# git push origin master
+# git push origin --tags
 
 # # get highest tag number
 # VERSION=`git describe --abbrev=0 --tags`
