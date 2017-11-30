@@ -9,12 +9,12 @@ if [[ ! $DEPLOY_RANK =~ ^(patch|minor|major)$ ]]; then
 	exit 1
 fi
 
-VERSION=$(npm -f version $DEPLOY_RANK)
+VERSION=$(npm --no-git-tag-version version $DEPLOY_RANK)
 
 echo "Release $VERSION"
 
 git commit -am "Release $VERSION" --allow-empty
-# git tag $VERSION
+git tag $VERSION
 # git push origin master
 # git push origin --tags
 
